@@ -10,6 +10,7 @@ use crate::config::Config;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
+#[cfg(target_os = "macos")]
 use std::process::Command;
 
 const TOKEN_PREFIX: &str = "@@HOMEBREW_PREFIX@@";
@@ -141,12 +142,14 @@ fn macho_deps(path: &Path) -> Result<Vec<String>, Box<dyn Error>> {
     Ok(deps)
 }
 
+#[cfg(target_os = "macos")]
 fn disp(path: &Path) -> String {
     path.to_string_lossy().into_owned()
 }
 
 /// Run a command, returning an error if it exits non-zero. Child output is
 /// suppressed; `install_name_tool` is noisy about signatures we re-create anyway.
+#[cfg(target_os = "macos")]
 fn run(cmd: &str, args: &[&str]) -> Result<(), Box<dyn Error>> {
     use std::process::Stdio;
     let status = Command::new(cmd)
